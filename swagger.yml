@@ -1,0 +1,619 @@
+openapi: 3.0.1
+info:
+  title: Food Ordering System API
+  version: 1.0.0
+  description: Food Ordering System API documentation
+  contact:
+    name: Kaveesha Senanayake
+    email: Kaveesha.Senanayake@syscolabs.com
+  x-updated-date: 2022-03-25
+  x-audience: sysco-internal
+  x-api-type: functional-system
+  x-api-id: eag-mini-eshop
+
+servers:
+  - url: http://eag-internal.com/v1/ordering-api
+tags:
+  - name: products
+    description: Operations about products
+  - name: category
+    description: Operations about categories
+  - name: cart
+    description: Operations about cart
+  - name: users
+    description: Operations about users
+
+paths:
+  /products/:
+    get:
+      tags:
+        - products
+      summary: Get All Product Details
+      description: Returns a single product
+      operationId: getProductByName
+      responses:
+        "200":
+          description: list of Products by categories.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/product"
+          headers:
+            Syy-Operation-Id:
+              schema:
+                type: string
+              description: Returns operationId
+        "400":
+          description: Bad Request
+          headers:
+            Syy-Operation-Id:
+              schema:
+                type: string
+              description: Returns operationId
+        "404":
+          description: Not Found
+          headers:
+            Syy-Operation-Id:
+              schema:
+                type: string
+              description: Returns operationId
+        "500":
+          description: "Internal server Error"
+      security:
+        - api_key: []
+
+  /categories/{category_id}/products/:
+    get:
+      tags:
+        - category
+      summary: Get All Product Details by Category
+      description: Returns a single product
+      operationId: getProductByCategory
+      parameters:
+        - name: category_id
+          in: path
+          description: "ID of Category"
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: list of Products by categories.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/product"
+          headers:
+            Syy-Operation-Id:
+              schema:
+                type: string
+              description: Returns operationId
+        "400":
+          description: Bad Request
+          headers:
+            Syy-Operation-Id:
+              schema:
+                type: string
+              description: Returns operationId
+        "404":
+          description: Not Found
+          headers:
+            Syy-Operation-Id:
+              schema:
+                type: string
+              description: Returns operationId
+        "500":
+          description: "Internal server Error"
+      security:
+        - api_key: []
+
+  /orders:
+    post:
+      tags:
+        - "cart"
+      summary: "Create new cart by customer"
+      description: Create new cart by customer
+      operationId: CreateNewCartByCustomer
+      parameters:
+        - in: header
+          name: Syy-Request-Id
+          schema:
+            type: string
+        - in: header
+          name: Syy-Correlation-Id
+          schema:
+            type: string
+      security:
+        - oAuth2ClientCredentials:
+            - user.write
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/request-save-new-order-details"
+      responses:
+        "201":
+          description: New cart added Successfully
+          headers:
+            Syy-Operation-Id:
+              schema:
+                type: string
+              description: Returns operationId
+        "400":
+          description: Bad Request
+          headers:
+            Syy-Operation-Id:
+              schema:
+                type: string
+              description: Returns operationId
+        "404":
+          description: Not Found
+          headers:
+            Syy-Operation-Id:
+              schema:
+                type: string
+              description: Returns operationId
+        "500":
+          description: "Internal server Error"
+
+  /orders/{customer_id}:
+    get:
+      tags:
+        - "cart"
+      summary: "view carts of specific customer"
+      description: Returns carts based on Customer ID
+      operationId: getCartsByCustomerID
+      parameters:
+        - name: customer_id
+          in: path
+          description: "ID of Customer"
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: Syy-Request-Id
+          schema:
+            type: string
+        - in: header
+          name: Syy-Correlation-Id
+          schema:
+            type: string
+      security:
+        - oAuth2ClientCredentials:
+            - user.read
+      responses:
+        "200":
+          description: list of carts of Customer ID.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/response-order-items-list"
+          headers:
+            Syy-Operation-Id:
+              schema:
+                type: string
+              description: Returns operationId
+        "404":
+          description: Not Found
+          headers:
+            Syy-Operation-Id:
+              schema:
+                type: string
+              description: Returns operationId
+        "500":
+          description: "Internal server Error"
+
+  /orders/{order_id}/products/{product_id}/:
+    delete:
+      tags:
+        - "cart"
+      summary: "Delete specific cart item from cart"
+      description: delete a cart item from specific cart
+      operationId: deleteCartitemByCartId
+      parameters:
+        - name: order_id
+          in: path
+          description: "ID of cart"
+          required: true
+          schema:
+            type: string
+        - name: product_id
+          in: path
+          description: "ID of the product"
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: Syy-Request-Id
+          schema:
+            type: string
+        - in: header
+          name: Syy-Correlation-Id
+          schema:
+            type: string
+      security:
+        - oAuth2ClientCredentials:
+            - user.write
+      responses:
+        "200":
+          description: Cart item deleted Successfully
+          headers:
+            Syy-Operation-Id:
+              schema:
+                type: string
+              description: Returns operationId
+        "400":
+          description: Bad Request
+          headers:
+            Syy-Operation-Id:
+              schema:
+                type: string
+              description: Returns operationId
+        "403":
+          description: Authentication Error - Forbidden
+          headers:
+            Syy-Operation-Id:
+              schema:
+                type: string
+              description: Returns operationId
+        "404":
+          description: Not Found
+          headers:
+            Syy-Operation-Id:
+              schema:
+                type: string
+              description: Returns operationId
+        "500":
+          description: "Internal server Error"
+
+  /orders/{order_id}:
+    delete:
+      tags:
+        - "cart"
+      summary: "Delete specific cart"
+      description: delete cart
+      operationId: deleteCartById
+      parameters:
+        - name: order_id
+          in: path
+          description: "ID of cart"
+          required: true
+          schema:
+            type: integer
+        - in: header
+          name: Syy-Request-Id
+          schema:
+            type: string
+        - in: header
+          name: Syy-Correlation-Id
+          schema:
+            type: string
+      security:
+        - oAuth2ClientCredentials:
+            - user.write
+      responses:
+        "200":
+          description: cart deleted Successfully
+          headers:
+            Syy-Operation-Id:
+              schema:
+                type: string
+              description: Returns operationId
+        "400":
+          description: Bad Request
+          headers:
+            Syy-Operation-Id:
+              schema:
+                type: string
+              description: Returns operationId
+        "403":
+          description: Authentication Error - Forbidden
+          headers:
+            Syy-Operation-Id:
+              schema:
+                type: string
+              description: Returns operationId
+        "404":
+          description: Not Found
+          headers:
+            Syy-Operation-Id:
+              schema:
+                type: string
+              description: Returns operationId
+        "500":
+          description: "Internal server Error"
+
+  /users:
+    post:
+      tags:
+        - users
+      summary: Create user
+      description: This can only be done by the logged in user.
+      operationId: createUser
+      requestBody:
+        description: Created user object
+        content:
+          "*/*":
+            schema:
+              $ref: "#/components/schemas/customers"
+        required: true
+      responses:
+        default:
+          description: successful operation
+          content: {}
+      x-codegen-request-body-name: body
+
+    get:
+      tags:
+        - users
+      summary: Get All User Details
+      description: Returns User details
+      operationId: getUserByID
+      responses:
+        "200":
+          description: list of Users.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user-details"
+          headers:
+            Syy-Operation-Id:
+              schema:
+                type: string
+              description: Returns operationId
+        "400":
+          description: Bad Request
+          headers:
+            Syy-Operation-Id:
+              schema:
+                type: string
+              description: Returns operationId
+        "404":
+          description: Not Found
+          headers:
+            Syy-Operation-Id:
+              schema:
+                type: string
+              description: Returns operationId
+        "500":
+          description: "Internal server Error"
+      security:
+        - api_key: []
+
+  /users/login:
+    get:
+      tags:
+        - customers
+      summary: Logs user into the system
+      operationId: loginUser
+      parameters:
+        - name: username
+          in: query
+          description: The user name for login
+          required: true
+          schema:
+            type: string
+        - name: password
+          in: query
+          description: The password for login in clear text
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          headers:
+            X-Rate-Limit:
+              description: calls per hour allowed by the user
+              schema:
+                type: integer
+                format: int32
+            X-Expires-After:
+              description: date in UTC when token expires
+              schema:
+                type: string
+                format: date-time
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+        400:
+          description: Invalid username/password supplied
+          content: {}
+
+  /customers/logout:
+    get:
+      tags:
+        - customers
+      summary: Logs out current logged in user session
+      operationId: logoutUser
+      responses:
+        default:
+          description: successful operation
+          content: {}
+
+components:
+  schemas:
+    product:
+      required:
+        - product_id
+        - category_id
+      type: object
+      properties:
+        product_id:
+          type: integer
+          format: int64
+        category_id:
+          $ref: "#/components/schemas/category"
+        product_name:
+          type: string
+          example: pizza
+        product_price:
+          type: number
+          format: decimal
+          example: 1980
+        product_quantity:
+          type: number
+          example: 2
+        product_description:
+          type: string
+          description: description of the products
+
+    customers:
+      properties:
+        customer_id:
+          type: integer
+        customer_first_name:
+          type: string
+        customer_last_name:
+          type: string
+        customer_address:
+          type: string
+        customer_mobile_number:
+          type: integer
+        customer_landline_number:
+          type: integer
+        customer_account_status:
+          type: boolean
+        customer_email:
+          type: string
+          example: abc@gmail.com
+        customer_password:
+          type: string
+        customer_profile_picture:
+          type: string
+
+    category:
+      properties:
+        category_id:
+          type: integer
+        category_name:
+          type: string
+
+    response-category-list:
+      type: object
+      description: list of categories
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: "#/components/schemas/category"
+
+    response-product-list:
+      type: object
+      description: list of products
+      properties:
+        products:
+          type: array
+          items:
+            $ref: "#/components/schemas/product"
+
+    orders:
+      properties:
+        order_id:
+          type: integer
+        no_of_orders:
+          type: integer
+        order_date:
+          type: string
+          example: 27/03/2022
+        order_status:
+          type: number
+          format: active/delayed/cancelled
+        payment_amount:
+          type: number
+        payment_date:
+          type: string
+          example: 03/04/2022
+        payment_type:
+          type: integer
+        delivery_date:
+          type: string
+          example: 03/04/2022
+        customer_id:
+          type: integer
+          "$ref": "#/components/schemas/customers"
+
+    order-details:
+      properties:
+        quantity:
+          type: integer
+        amount:
+          type: number
+        order_id:
+          type: integer
+          "$ref": "#/components/schemas/orders"
+        product_id:
+          type: integer
+          "$ref": "#/components/schemas/product"
+
+    user-details:
+      properties:
+        quantity:
+          type: integer
+        amount:
+          type: number
+        user_id:
+          type: integer
+
+    request-order-details:
+      properties:
+        unit_price:
+          type: number
+        quantity:
+          type: number
+        product_id:
+          type: string
+          "$ref": "#/components/schemas/product"
+        order_id:
+          type: integer
+          "$ref": "#/components/schemas/orders"
+
+    response-order-details:
+      type: object
+      description: list of order details for specific customer
+      properties:
+        order_items:
+          type: array
+          items:
+            $ref: "#/components/schemas/orders"
+
+    request-save-new-order-details:
+      type: object
+      description: list of order items for a specific order
+      properties:
+        customer_id:
+          type: integer
+          "$ref": "#/components/schemas/customers"
+        order_items:
+          type: array
+          items:
+            $ref: "#/components/schemas/request-order-details"
+
+    response-order-items-list:
+      type: object
+      description: list of cart items for a specific cart
+      properties:
+        cartitems:
+          type: array
+          items:
+            $ref: "#/components/schemas/order-details"
+
+  securitySchemes:
+    oAuth2ClientCredentials:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.mini.project.com/token
+          scopes:
+            admin.write: write access for admin
+            admin.read: read access for admin
+            user.write: write access for user
+            user.read: read access for admin
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
