@@ -6,23 +6,32 @@ require("dotenv").config();
 class UserManagementService {
   async addUser(req, res) {
     try {
-      // encrypt the password
-      const hashedPass = await new Promise((resolve, reject) => {
-        bcrypt.hash(req.password, 10, (err, hash) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(hash);
-          }
-        });
-      });
-      const user = {
-        email: req.email,
-        password: hashedPass,
-      };
+      // get user detail from db
+      const userInfo = await UserManagementDao.getUserInfo(req);
 
-      const response = await UserManagementDao.addUser(user);
-      return response;
+      const userExists = await this.userExit(userInfo);
+
+      if (userExists) {
+        throw new Error("User already registered!");
+      } else {
+        // encrypt the password
+        const hashedPass = await new Promise((resolve, reject) => {
+          bcrypt.hash(req.password, 10, (err, hash) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(hash);
+            }
+          });
+        });
+        const user = {
+          email: req.email,
+          password: hashedPass,
+        };
+
+        const response = await UserManagementDao.addUser(user);
+        return response;
+      }
     } catch (error) {
       return error;
     }
@@ -31,11 +40,13 @@ class UserManagementService {
   async loginUser(req, res) {
     try {
       // get user detail from db
-      const userInfo = await UserManagementDao.loginUser(req);
+      const userInfo = await UserManagementDao.getUserInfo(req);
+
+      const userExists = await this.userExit(userInfo);
 
       // verify the user and generate the token
       return new Promise((resolve, reject) => {
-        if (userInfo.length < 1) {
+        if (!userExists) {
           reject(new Error("User not found!"));
         } else {
           bcrypt.compare(req.password, userInfo[0].password, (err, result) => {
@@ -60,6 +71,13 @@ class UserManagementService {
       });
     } catch (error) {
       return error;
+    }
+  }
+
+  // check if user already registered
+  userExit(userInfo) {
+    if (userInfo.length > 0) {
+      return true;
     }
   }
 }

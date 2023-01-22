@@ -30,4 +30,26 @@ describe("user-management route", () => {
       expect(response.body).toBeDefined();
     });
   });
+
+  describe("login user function", () => {
+    test("login user request", async () => {
+      jest.spyOn(UserManagementService, "loginUser").mockReturnValueOnce(
+        Promise.resolve({
+          message: "Auth Successful",
+          token:
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImNAZ21haWwuY29tIiwidXNlcklkIjoiNjNjYTA4ZDE5MGI4ZDdmZWE0OTQ4OWYyIiwiaWF0IjoxNjc0Mzk1ODE1LCJleHAiOjE2NzQzOTk0MTV9.0jiIi1aLJ_-hilHzqrqmEYwza4JfKcfXCniFyYA3Des",
+        })
+      );
+
+      const response = await request(app)
+        .post(`/users/login`)
+        .send({
+          email: "user@gmail.com",
+          password: "user$123",
+        })
+        .set("Accept", "application/json");
+      expect(response.status).toEqual(201);
+      expect(response.body).toBeDefined();
+    });
+  });
 });
