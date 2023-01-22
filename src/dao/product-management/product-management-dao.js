@@ -13,14 +13,14 @@ class ProductManagementDao {
   }
 
   async createProduct(req, res) {
-    const prodcut = await Product.create(req)
+    const product = await Product.create(req)
       .then((result) => {
         return result;
       })
       .catch((err) => {
         return err;
       });
-    return prodcut;
+    return product;
   }
 }
 module.exports = new ProductManagementDao();
