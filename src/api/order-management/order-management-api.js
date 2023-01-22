@@ -2,6 +2,7 @@ const express = require("express");
 const Router = express.Router();
 const OrderManagementService = require("../../service/order-management/order-management-service");
 const { checkAuth } = require("../../middleware/check-auth");
+const validatecreateOrderModel = require("../../model/order-model/validate-order-model");
 
 class OrderManagementApi {
   constructor() {
@@ -27,6 +28,7 @@ class OrderManagementApi {
       // Authenticate the API
       await checkAuth(req.headers.authorization);
       const request = req.body;
+      await validatecreateOrderModel(request);
       const response = await OrderManagementService.createOrder(request);
       res.status(201).send(response);
     } catch (error) {

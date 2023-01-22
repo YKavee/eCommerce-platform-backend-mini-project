@@ -1,6 +1,7 @@
 const express = require("express");
 const Router = express.Router();
 const UserManagementService = require("../../service/user-management/user-management-service");
+const validatecreateUserModel = require("../../model/user-model/validate-user-model");
 
 class UserManagementApi {
   constructor() {
@@ -12,6 +13,7 @@ class UserManagementApi {
   async postUsers(req, res) {
     try {
       const request = req.body;
+      await validatecreateUserModel(request);
       const response = await UserManagementService.addUser(request);
       res.status(201).send(response);
     } catch (error) {
@@ -23,6 +25,7 @@ class UserManagementApi {
   async loginUsers(req, res) {
     try {
       const request = req.body;
+      await validatecreateUserModel(request);
       const response = await UserManagementService.loginUser(request);
       res.status(201).send({ message: "Auth Successful", token: response });
     } catch (error) {
