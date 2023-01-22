@@ -12,7 +12,7 @@ class ProductManagementDao {
     return userInfo;
   }
 
-  async loginUser(user) {
+  async getUserInfo(user) {
     const userInfo = await User.find({ email: user.email })
       .then((result) => {
         return result;
