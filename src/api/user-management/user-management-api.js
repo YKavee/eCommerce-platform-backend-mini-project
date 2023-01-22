@@ -5,12 +5,12 @@ const validatecreateUserModel = require("../../model/user-model/validate-user-mo
 
 class UserManagementApi {
   constructor() {
-    Router.post("/signup", this.postUsers);
+    Router.post("/signup", this.addUsers);
     Router.post("/login", this.loginUsers);
   }
 
   //Create a new User
-  async postUsers(req, res) {
+  async addUsers(req, res) {
     try {
       const request = req.body;
       await validatecreateUserModel(request);
