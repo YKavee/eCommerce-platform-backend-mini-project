@@ -1,8 +1,8 @@
 const Order = require("../../model/order-model/order-model");
 
 class OrderManagementDao {
-  async getAllOrders() {
-    const orders = await Order.find({})
+  async getAllOrders(userInfo) {
+    const orders = await Order.find({ userId: userInfo.userId })
       .then((docs) => {
         return docs;
       })

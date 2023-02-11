@@ -14,8 +14,8 @@ class OrderManagementApi {
   async getAllOrders(req, res) {
     try {
       // Authenticate the API
-      await checkAuth(req.headers.authorization);
-      const response = await OrderManagementService.getAllOrders();
+      const userInfo = await checkAuth(req.headers.authorization);
+      const response = await OrderManagementService.getAllOrders(userInfo);
       res.status(200).send(response);
     } catch (error) {
       res.status(500).send(error);
@@ -26,10 +26,13 @@ class OrderManagementApi {
   async createOrder(req, res) {
     try {
       // Authenticate the API
-      await checkAuth(req.headers.authorization);
+      const userInfo = await checkAuth(req.headers.authorization);
       const request = req.body;
       await validatecreateOrderModel(request);
-      const response = await OrderManagementService.createOrder(request);
+      const response = await OrderManagementService.createOrder(
+        userInfo,
+        request
+      );
       res.status(201).send(response);
     } catch (error) {
       res.status(500).send(error);
