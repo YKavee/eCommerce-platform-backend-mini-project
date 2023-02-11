@@ -1,6 +1,7 @@
 const UserManagementDao = require("../../dao/user-management/user-management-dao");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { userExit } = require("../../utils/utils");
 require("dotenv").config();
 
 class UserManagementService {
@@ -9,7 +10,7 @@ class UserManagementService {
       // get user detail from db
       const userInfo = await UserManagementDao.getUserInfo(req);
 
-      const userExists = await this.userExit(userInfo);
+      const userExists = await userExit(userInfo);
 
       if (userExists) {
         throw new Error("User already registered!");
@@ -42,7 +43,7 @@ class UserManagementService {
       // get user detail from db
       const userInfo = await UserManagementDao.getUserInfo(req);
 
-      const userExists = await this.userExit(userInfo);
+      const userExists = await userExit(userInfo);
 
       // verify the user and generate the token
       return new Promise((resolve, reject) => {
@@ -71,13 +72,6 @@ class UserManagementService {
       });
     } catch (error) {
       return error;
-    }
-  }
-
-  // check if user already registered
-  userExit(userInfo) {
-    if (userInfo.length > 0) {
-      return true;
     }
   }
 }

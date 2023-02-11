@@ -424,17 +424,6 @@ paths:
           description: Invalid username/password supplied
           content: {}
 
-  /customers/logout:
-    get:
-      tags:
-        - customers
-      summary: Logs out current logged in user session
-      operationId: logoutUser
-      responses:
-        default:
-          description: successful operation
-          content: {}
-
 components:
   schemas:
     product:
