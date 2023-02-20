@@ -3,6 +3,7 @@ const Router = express.Router();
 const ProductManagementService = require("../../service/product-management/product-management-service");
 const { checkAuth } = require("../../middleware/check-auth");
 const validatecreateProductModel = require("../../model/product-model/validate-product-model");
+const { productExit } = require("../../utils/utils");
 
 class ProductManagementApi {
   constructor() {
@@ -14,7 +15,15 @@ class ProductManagementApi {
   async getAllProducts(req, res) {
     try {
       const response = await ProductManagementService.getAllProducts();
-      res.status(200).send(response);
+      const productExits = productExit(response);
+
+      if (!productExits) {
+        return res.status(500).send({
+          message: "Products does not exist",
+        });
+      } else {
+        res.status(200).send(response);
+      }
     } catch (error) {
       res.status(500).send(error);
     }
