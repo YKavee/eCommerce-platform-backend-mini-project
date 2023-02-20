@@ -21,3 +21,7 @@ Execute "docker build . -t mini-project-backend:latest"
 ### Run Docker image
 
 Execute "docker run -d -p 8000:8000 mini-project-backend:latest"
+
+### Run Docker image
+
+docker compose up
