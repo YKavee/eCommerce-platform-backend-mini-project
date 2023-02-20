@@ -12,7 +12,7 @@ info:
   x-api-id: eag-mini-eshop
 
 servers:
-  - url: http://eag-internal.com/v1/ordering-api
+  - url: http://localhost:3000/food-ordering/v1
 tags:
   - name: products
     description: Operations about products

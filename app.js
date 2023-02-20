@@ -29,6 +29,8 @@ app.use((req, res, next) => {
 // connect database
 mongoose
   .connect("mongodb://127.0.0.1:27017/MiniProjectDB", {
+    // .connect("mongodb://mongo:27017/MiniProjectDB2", {
+    // .connect("mongodb://127.0.0.1:27017/MiniProjectDB_check_exception_handling", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })

@@ -3,6 +3,7 @@ const Router = express.Router();
 const OrderManagementService = require("../../service/order-management/order-management-service");
 const { checkAuth } = require("../../middleware/check-auth");
 const validatecreateOrderModel = require("../../model/order-model/validate-order-model");
+const { orderExit } = require("../../utils/utils");
 
 class OrderManagementApi {
   constructor() {
@@ -16,7 +17,15 @@ class OrderManagementApi {
       // Authenticate the API
       const userInfo = await checkAuth(req.headers.authorization);
       const response = await OrderManagementService.getAllOrders(userInfo);
-      res.status(200).send(response);
+      const orderExits = orderExit(response);
+
+      if (!orderExits) {
+        return res.status(500).send({
+          message: "Orders does not exist",
+        });
+      } else {
+        res.status(200).send(response);
+      }
     } catch (error) {
       res.status(500).send(error);
     }
